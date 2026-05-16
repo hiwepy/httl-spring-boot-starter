@@ -11,7 +11,7 @@ Spring Boot Starter For Httl
 
 ``` xml
 <dependency>
-	<groupId>com.github.hiwepy</groupId>
+	<groupId>io.github.hiwepy</groupId>
 	<artifactId>httl-spring-boot-starter</artifactId>
 	<version>1.0.0.RELEASE</version>
 </dependency>

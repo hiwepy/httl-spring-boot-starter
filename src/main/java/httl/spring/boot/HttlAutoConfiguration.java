@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.Servlet;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.Servlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

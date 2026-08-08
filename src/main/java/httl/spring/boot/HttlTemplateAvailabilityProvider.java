@@ -21,12 +21,33 @@ import java.util.List;
 
 import org.springframework.boot.autoconfigure.template.PathBasedTemplateAvailabilityProvider;
 
+/**
+ * {@link PathBasedTemplateAvailabilityProvider} that lets Spring Boot report
+ * whether HTTL templates are available for a given view name without loading
+ * the full HTTL engine.
+ * <p>
+ * Spring Boot queries this lightweight provider during startup (for example to
+ * pick the default error view technology) by checking whether a template file
+ * exists under the configured loader paths.
+ * </p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 public class HttlTemplateAvailabilityProvider extends PathBasedTemplateAvailabilityProvider {
 
+	/**
+	 * Creates the provider, pointing at {@link HttlAutoConfiguration} and the
+	 * {@code spring.httl} property namespace.
+	 */
 	public HttlTemplateAvailabilityProvider() {
 		super("httl.spring.boot.HttlAutoConfiguration", HttlTemplateAvailabilityProperties.class, "spring.httl");
 	}
 
+	/**
+	 * Minimal mirror of {@link HttlProperties} used by the availability check,
+	 * exposing only the fields Spring Boot needs to resolve a template path.
+	 */
 	static final class HttlTemplateAvailabilityProperties extends TemplateAvailabilityProperties {
 
 		private List<String> templateLoaderPath = new ArrayList<String>(Arrays.asList(HttlProperties.DEFAULT_TEMPLATE_LOADER_PATH));
@@ -35,15 +56,30 @@ public class HttlTemplateAvailabilityProvider extends PathBasedTemplateAvailabil
 			super(HttlProperties.DEFAULT_PREFIX, HttlProperties.DEFAULT_SUFFIX);
 		}
 
+		/**
+		 * Returns the template loader paths used for the availability check.
+		 *
+		 * @return list of template loader paths
+		 */
 		@Override
 		protected List<String> getLoaderPath() {
 			return this.templateLoaderPath;
 		}
 
+		/**
+		 * Returns the template loader paths.
+		 *
+		 * @return list of template loader paths
+		 */
 		public List<String> getTemplateLoaderPath() {
 			return this.templateLoaderPath;
 		}
 
+		/**
+		 * Sets the template loader paths.
+		 *
+		 * @param templateLoaderPath list of template loader paths
+		 */
 		public void setTemplateLoaderPath(List<String> templateLoaderPath) {
 			this.templateLoaderPath = templateLoaderPath;
 		}

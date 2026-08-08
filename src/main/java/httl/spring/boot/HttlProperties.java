@@ -24,23 +24,48 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Configuration properties for the HTTL template engine, bound to the
+ * {@value #PREFIX} namespace.
+ * <p>
+ * Extends Spring Boot's {@link AbstractTemplateViewResolverProperties} so the
+ * standard view-resolver options (prefix, suffix, cache, content-type, ...)
+ * are honoured, while adding HTTL-specific tuning such as the native
+ * {@code settings} map and the {@code autoCheck} hot-reload flag.
+ * </p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 @ConfigurationProperties(HttlProperties.PREFIX)
 @Getter
 @Setter
 @ToString
 public class HttlProperties extends AbstractTemplateViewResolverProperties {
 
+	/**
+	 * Property prefix under which HTTL options live.
+	 */
 	public static final String PREFIX = "spring.httl";
-	
+
+	/**
+	 * Default location from which HTTL templates are loaded.
+	 */
 	public static final String DEFAULT_TEMPLATE_LOADER_PATH = "classpath:/templates/";
 
+	/**
+	 * Default template name prefix.
+	 */
 	public static final String DEFAULT_PREFIX = "";
 
+	/**
+	 * Default template file suffix.
+	 */
 	public static final String DEFAULT_SUFFIX = ".httl";
 
 	/** Whether Enable Form Authorization. */
 	private boolean enabled = false;
-	
+
 	/**
 	 * Well-known Beetl keys which will be passed to Beetl's  Configuration.
 	 */
@@ -56,12 +81,15 @@ public class HttlProperties extends AbstractTemplateViewResolverProperties {
 	 * hot detection of template changes.
 	 */
 	private boolean preferFileSystemAccess = true;
-	
+
 	/**
-	 * 是否自动检查文件是否变动
+	 * Whether template file changes are detected automatically (hot reload).
 	 */
 	private boolean autoCheck = false;
 
+	/**
+	 * Creates a new instance using the default template prefix and suffix.
+	 */
 	public HttlProperties() {
 		super(DEFAULT_PREFIX, DEFAULT_SUFFIX);
 	}

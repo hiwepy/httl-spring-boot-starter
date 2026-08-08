@@ -28,22 +28,49 @@ import httl.web.WebEngine;
 import httl.web.springmvc.HttlViewResolver;
 
 
+/**
+ * Spring Boot auto-configuration for the HTTL (Hyper-Text Template Language)
+ * view layer.
+ * <p>
+ * Binds {@link HttlProperties}, optionally verifies that the configured
+ * template location exists, and registers the appropriate inner
+ * configuration based on the application type: a no-op
+ * {@link HttlNonWebConfiguration} for non-web apps and an
+ * {@link HttlWebConfiguration} that contributes an {@link HttlViewResolver}
+ * (and optional {@link ResourceUrlEncodingFilter}) for web apps.
+ * </p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 @Configuration
 @AutoConfigureAfter(WebMvcAutoConfiguration.class)
 @EnableConfigurationProperties(HttlProperties.class)
 public class HttlAutoConfiguration {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(HttlAutoConfiguration.class);
 
 	private final ApplicationContext applicationContext;
 
 	private final HttlProperties properties;
 
+	/**
+	 * Creates a new instance wiring the Spring context and the bound HTTL
+	 * properties.
+	 *
+	 * @param applicationContext the running Spring application context
+	 * @param properties         the bound HTTL configuration properties
+	 */
 	public HttlAutoConfiguration(ApplicationContext applicationContext, HttlProperties properties) {
 		this.applicationContext = applicationContext;
 		this.properties = properties;
 	}
 
+	/**
+	 * Verifies that at least one of the configured template loader paths
+	 * resolves to an existing resource, emitting a warning otherwise.
+	 * <p>Skipped when {@code spring.httl.checkTemplateLocation} is disabled.</p>
+	 */
 	@PostConstruct
 	public void checkTemplateLocationExists() {
 		if (this.properties.isCheckTemplateLocation()) {
@@ -66,11 +93,20 @@ public class HttlAutoConfiguration {
 		}
 	}
 
+	/**
+	 * Shared base class holding the common HTTL wiring logic for both web and
+	 * non-web application configurations.
+	 */
 	protected static class HttlConfiguration {
 
 		@Autowired
 		protected HttlProperties properties;
 
+		/**
+		 * Applies the bound HTTL settings to the supplied configuration factory.
+		 *
+		 * @param factory the configuration factory to configure
+		 */
 		protected void applyProperties(HttlConfiguration factory) {
 			/*factory.setTemplateLoaderPaths(this.properties.getTemplateLoaderPath());
 			factory.setPreferFileSystemAccess(this.properties.isPreferFileSystemAccess());
@@ -81,7 +117,11 @@ public class HttlAutoConfiguration {
 		}
 
 	}
-	
+
+	/**
+	 * Inner configuration activated in non-web applications. Kept as an
+	 * extension point; the concrete bean wiring is currently commented out.
+	 */
 	@Configuration
 	@ConditionalOnNotWebApplication
 	public static class HttlNonWebConfiguration extends HttlConfiguration {
@@ -96,11 +136,22 @@ public class HttlAutoConfiguration {
 
 	}
 
+	/**
+	 * Inner configuration activated in web applications, registering the HTTL
+	 * Spring MVC view resolver and (optionally) the resource URL encoding
+	 * filter used for cache-busting static resources.
+	 */
 	@Configuration
 	@ConditionalOnClass({ Servlet.class, WebEngine.class })
 	@ConditionalOnWebApplication
 	public static class HttlWebConfiguration extends HttlConfiguration {
-		
+
+		/**
+		 * Creates the {@link HttlViewResolver} used to render HTTL templates,
+		 * unless the user has already defined a bean named {@code httlViewResolver}.
+		 *
+		 * @return the HTTL view resolver
+		 */
 		@Bean
 		@ConditionalOnMissingBean(name = "httlViewResolver")
 		@ConditionalOnProperty(name = "spring.httl.enabled", matchIfMissing = true)
@@ -110,6 +161,12 @@ public class HttlAutoConfiguration {
 			return resolver;
 		}
 
+		/**
+		 * Creates the {@link ResourceUrlEncodingFilter} that rewrites static
+		 * resource URLs to include cache-busting content hashes.
+		 *
+		 * @return the resource URL encoding filter
+		 */
 		@Bean
 		@ConditionalOnMissingBean
 		@ConditionalOnEnabledResourceChain
@@ -118,5 +175,5 @@ public class HttlAutoConfiguration {
 		}
 
 	}
-	
+
 }

@@ -39,7 +39,7 @@ import httl.web.springmvc.HttlViewResolver;
  * (and optional {@link ResourceUrlEncodingFilter}) for web apps.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 @Configuration(proxyBeanMethods = false)

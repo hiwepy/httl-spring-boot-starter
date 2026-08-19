@@ -21,25 +21,8 @@ import java.util.List;
 
 import org.springframework.boot.autoconfigure.template.PathBasedTemplateAvailabilityProvider;
 
-/**
- * {@link PathBasedTemplateAvailabilityProvider} that lets Spring Boot report
- * whether HTTL templates are available for a given view name without loading
- * the full HTTL engine.
- * <p>
- * Spring Boot queries this lightweight provider during startup (for example to
- * pick the default error view technology) by checking whether a template file
- * exists under the configured loader paths.
- * </p>
- *
- * @author <a href="https://github.com/loong10k">Loong Wan</a>
- * @since 1.0.0
- */
 public class HttlTemplateAvailabilityProvider extends PathBasedTemplateAvailabilityProvider {
 
-	/**
-	 * Creates the provider, pointing at {@link HttlAutoConfiguration} and the
-	 * {@code spring.httl} property namespace.
-	 */
 	public HttlTemplateAvailabilityProvider() {
 		super("httl.spring.boot.HttlAutoConfiguration", HttlTemplateAvailabilityProperties.class, "spring.httl");
 	}
@@ -47,6 +30,8 @@ public class HttlTemplateAvailabilityProvider extends PathBasedTemplateAvailabil
 	/**
 	 * Minimal mirror of {@link HttlProperties} used by the availability check,
 	 * exposing only the fields Spring Boot needs to resolve a template path.
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
 	 */
 	static final class HttlTemplateAvailabilityProperties extends TemplateAvailabilityProperties {
 
